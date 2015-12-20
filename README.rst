@@ -4,11 +4,11 @@ cookiecutter-pylibrary
 
 Cookiecutter_ template for a Python python library. |travis| |appveyor|
 
-.. |travis| image:: http://img.shields.io/travis/ionelmc/cookiecutter-pylibrary/master.png?style=flat
+.. |travis| image:: http://img.shields.io/travis/ionelmc/cookiecutter-pylibrary/master.svg?style=flat&label=Travis
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/ionelmc/cookiecutter-pylibrary
 
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/ionelmc/cookiecutter-pylibrary?branch=master
+.. |appveyor| image:: https://img.shields.io/appveyor/ci/ionelmc/cookiecutter-pylibrary/master.svg?style=flat&label=AppVeyor
     :alt: AppVeyor Build Status
     :target: https://ci.appveyor.com/project/ionelmc/cookiecutter-pylibrary
 
@@ -32,12 +32,12 @@ This is an "all inclusive" sort of template.
 * Pytest_ or Nose_ for testing Python 2.6, 2.7, 3.3, PyPy etc.
 * *Optional* support for creating a tests matrix out of dependencies and python versions.
 * Travis-CI_ and AppVeyor_ for continuous testing.
-* Coveralls_ for coverage tracking (using Tox_).
+* Coveralls_ or Codecov_ for coverage tracking (using Tox_).
 * Documentation with Sphinx_, ready for ReadTheDocs_.
 * Configurations for:
 
-  * `isort <https://pypi.python.org/pypi/isort>`_
-  * `bumpversion <https://pypi.python.org/pypi/bumpversion>`_
+  * isort_
+  * bumpversion_
 
 * Support for C extensions (including coverage measurement for the C code).
 * Packaging and code quality checks. This template comes with a tox environment (``check``) that will:
@@ -132,6 +132,78 @@ You will be asked for these fields:
         * ``click`` - a command implemented with `click <http://click.pocoo.org/>`_ - which you can use to build more complex commands.
         * ``no`` - no CLI at all.
 
+    * - ``bin_name``
+      - .. code:: python
+
+            "nameless"
+      - Name of the CLI bin/executable file.
+
+    * - ``cookiecutter.coveralls``
+      - .. code:: python
+
+            "yes"
+      - Enable pushing coverage data to Coveralls_ and add badge in ``README.rst``.
+
+    * - ``cookiecutter.codecov``
+      - .. code:: python
+
+            "no"
+      - Enable pushing coverage data to Codecov_ and add badge in ``README.rst``.
+
+        **Note:** Doesn't support pushing C extension coverage yet.
+
+    * - ``cookiecutter.landscape``
+      - .. code:: python
+
+            "no"
+      - Add a Landscape_ badge in ``README.rst``.
+
+    * - ``cookiecutter.scrutinizer``
+      - .. code:: python
+
+            "no"
+      - Add a Scrutinizer_ badge in ``README.rst``.
+
+    * - ``cookiecutter.codacy``
+      - .. code:: python
+
+            "no"
+      - Add a Codacy_ badge in ``README.rst``.
+
+	    **Note:** After importing the project in Codacy, find the hexadecimal project ID from settings and replace it in badge URL
+
+    * - ``cookiecutter.codeclimate``
+      - .. code:: python
+
+            "no"
+      - Add a CodeClimate_ badge in ``README.rst``.
+
+    * - ``sphinx_theme``
+      - .. code:: python
+
+            "readthedocs"
+      - What Sphinx_ theme to use.
+
+        If theme is different than ``"readthedocs"`` then it's also going to be added in ``docs/requirements.txt``.
+
+        Suggested alternative: `sphinx-py3doc-enhanced-theme
+        <https://pypi.python.org/pypi/sphinx_py3doc_enhanced_theme>` for a responsive theme based on
+        the Python 3 documentation.
+    * - ``travis``
+      - .. code:: python
+
+            "yes"
+      - If you want the Travis_ badge and configuration.
+    * - ``appveyor``
+      - .. code:: python
+
+            "yes"
+      - If you want the AppVeyor_ badge and configuration.
+    * - ``requiresio``
+      - .. code:: python
+
+            "yes"
+      - If you want the `requires.io`_ badge and configuration.
 
 The testing (``tox.ini`` and ``.travis.yml``) configuration is generated from templates. For your convenience there's an
 initial bootstrap ``tox.ini``, to get the initial generation going just run::
@@ -141,7 +213,7 @@ initial bootstrap ``tox.ini``, to get the initial generation going just run::
 You can later regenerate ``tox.ini`` and ``.travis.yml`` by running (if you enabled the ``test_matrix_configurator``
 option)::
 
-  tox -e configure
+  tox -e bootstrap
 
 After this you can create the initial repository (make sure you `create <https://github.com/new>`_ an *empty* Github
 project)::
@@ -169,7 +241,7 @@ To run all the tests, just run::
 
 To see all the tox environments::
 
-  tox --listenvs
+  tox -l
 
 To only build the docs::
 
@@ -180,9 +252,22 @@ To build and verify that the built package is proper and other code QA checks::
   tox -e check
 
 Releasing the project
-``````````````````````
-
+`````````````````````
 Before releasing your package on PyPI you should have all the tox environments passing.
+
+Version management
+''''''''''''''''''
+
+This template provides a basic bumpversion_ configuration. It's as simple as running:
+
+* ``bumpversion patch`` to increase version from `1.0.0` to `1.0.1`.
+* ``bumpversion minor`` to increase version from `1.0.0` to `1.1.0`.
+* ``bumpversion major`` to increase version from `1.0.0` to `2.0.0`.
+
+You should read `Semantic Versioning 2.0.0 <http://semver.org/>`_ before bumping versions.
+
+Building and uploading
+''''''''''''''''''''''
 
 To make a release of the project on PyPI, the most simple usage is::
 
@@ -193,8 +278,6 @@ Explanations:
 
 * ``release`` is aliased to ``register clean sdist bdist_wheel``, see ``setup.cfg``.
 * `twine <https://pypi.python.org/pypi/twine>`_ is a tool that you can use to securely upload your releases to PyPI.
-
-If you care about security you can do secure uploads to PyPI using `twine <https://pypi.python.org/pypi/twine>`_.
 
 Changelog
 ---------
@@ -207,6 +290,15 @@ Questions & answers
 There's no Makefile?
 
   Sorry, no ``Makefile`` yet. The Tox_ environments stand for whatever you'd have in a ``Makefile``.
+
+Why does ``tox.ini`` have a ``passenv = *``?
+
+  Tox 2.0 changes the way it runs subprocesses - it no longer passes all the environment variables by default. This causes
+  all sorts of problems if you want to run/use any of these with Tox: SSH Agents, Browsers (for Selenium), Appengine SDK,
+  VC Compiler and so on.
+
+  `cookiecutter-pylibrary` errs on the side of convenience here. You can always remove ``passenv = *`` if you like
+  the strictness.
 
 Why is the version stored in several files (``pkg/__init__.py``, ``setup.py``, ``docs/conf.py``)?
 
@@ -237,3 +329,11 @@ If you have criticism or suggestions please open up an Issue or Pull Request.
 .. _AppVeyor: http://www.appveyor.com/
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _Nose: http://nose.readthedocs.org/
+.. _isort: https://pypi.python.org/pypi/isort
+.. _bumpversion: https://pypi.python.org/pypi/bumpversion
+.. _Codecov: http://codecov.io/
+.. _Landscape: https://landscape.io/
+.. _Scrutinizer: https://scrutinizer-ci.com/
+.. _Codacy: https://codacy.com/
+.. _CodeClimate: https://codeclimate.com/
+.. _`requires.io`: https://requires.io/

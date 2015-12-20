@@ -18,7 +18,7 @@ from setuptools import setup
 {%- if cookiecutter.c_extension_optional|lower == 'yes' %}
 from setuptools.command.build_ext import build_ext
 {%- endif %}
-from distutils.core import Extension
+from setuptools import Extension
 {%- if cookiecutter.c_extension_optional|lower == 'yes' %}
 from distutils.errors import CCompilerError
 from distutils.errors import CompileError
@@ -27,6 +27,7 @@ from distutils.errors import DistutilsPlatformError
 {%- endif %}
 {%- endif %}
 
+
 def read(*names, **kwargs):
     return io.open(
         join(dirname(__file__), *names),
@@ -34,6 +35,14 @@ def read(*names, **kwargs):
     ).read()
 
 
+{% if cookiecutter.c_extension_support|lower == 'yes' -%}
+# Enable code coverage for C code: we can't use CFLAGS=-coverage in tox.ini, since that may mess with compiling
+# dependencies (e.g. numpy). Therefore we set SETUPPY_CFLAGS=-coverage in tox.ini and copy it to CFLAGS here (after
+# deps have been safely installed).
+if 'TOXENV' in os.environ and 'SETUPPY_CFLAGS' in os.environ:
+    os.environ['CFLAGS'] = os.environ['SETUPPY_CFLAGS']
+
+{% endif %}
 {% if cookiecutter.c_extension_support|lower == 'yes' and cookiecutter.c_extension_optional|lower == 'yes' -%}
 class optional_build_ext(build_ext):
     '''Allow the building of C extensions to fail.'''
@@ -47,7 +56,7 @@ class optional_build_ext(build_ext):
     def build_extension(self, ext):
         try:
             build_ext.build_extension(self, ext)
-        except (CCompilerError, CompileError, DistutilsExecError) as e:
+        except Exception as e:
             self._unavailable(e)
             self.extensions = []  # avoid copying missing files (it would fail).
 
@@ -72,7 +81,10 @@ setup(
     version='{{ cookiecutter.version }}',
     license='BSD',
     description={{ '{0!r}'.format(cookiecutter.project_short_description).lstrip('ub') }},
-    long_description='%s\n%s' % (read('README.rst'), re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))),
+    long_description='%s\n%s' % (
+        re.compile('^.. start-badges.*^.. end-badges', re.M|re.S).sub('', read('README.rst')),
+        re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
+    ),
     author={{ '{0!r}'.format(cookiecutter.full_name).lstrip('ub') }},
     author_email={{ '{0!r}'.format(cookiecutter.email).lstrip('ub') }},
     url='https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}',
@@ -95,6 +107,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Utilities',
@@ -110,15 +123,20 @@ setup(
 {%- endif %}
     ],
     extras_require={
-        # eg: 'rst': ['docutils>=0.11'],
+        # eg:
+        #   'rst': ['docutils>=0.11'],
+        #   ':python_version=="2.6"': ['argparse'],
     },
+    setup_requires=[
+        # eg: 'cython',
+    ],
+{%- if cookiecutter.command_line_interface|lower in ['plain', 'click'] %}
     entry_points={
         'console_scripts': [
-{%- if cookiecutter.c_extension_support|lower in 'plain', 'click' %}
-            '{{ cookiecutter.package_name }} = {{ cookiecutter.package_name }}.__main__:main',
-{%- endif %}
+            '{{ cookiecutter.bin_name }} = {{ cookiecutter.package_name|replace('-', '_') }}.cli:main',
         ]
     },
+{%- endif %}
 {%- if cookiecutter.c_extension_support|lower == 'yes' -%}
 {%- if cookiecutter.c_extension_optional|lower == 'yes' %}
     cmdclass={'build_ext': optional_build_ext},
@@ -130,7 +148,7 @@ setup(
             include_dirs=[dirname(path)]
         )
         for root, _, _ in os.walk('src')
-        for path in glob(join(root, '*.c'))
-    ]
+        for path in glob(join(root, '*.c'))  # if you want to use cython, just replace "c" with "pyx"
+    ],
 {%- endif %}
 )

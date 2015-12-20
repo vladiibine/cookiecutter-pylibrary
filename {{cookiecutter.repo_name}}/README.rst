@@ -1,55 +1,102 @@
-===============================
-{{ cookiecutter.project_name }}
-===============================
+========
+Overview
+========
 
-| |docs| |travis| |appveyor| |coveralls| |landscape| |scrutinizer|
-| |version| |downloads| |wheel| |supported-versions| |supported-implementations|
+.. start-badges
+
+.. list-table::
+    :stub-columns: 1
+
+    * - docs
+      - |docs|
+    * - tests
+      - | {%- if cookiecutter.travis|lower == 'yes' %} |travis|{% endif -%}
+          {%- if cookiecutter.appveyor|lower == 'yes' %} |appveyor|{% endif -%}
+          {%- if cookiecutter.requiresio|lower == 'yes' %} |requires|{% endif -%}
+        {{ '' }}
+        | {%- if cookiecutter.coveralls|lower == 'yes' %} |coveralls|{% endif -%}
+          {%- if cookiecutter.codecov|lower == 'yes' %} |codecov|{% endif -%}
+        {{ '' }}
+        | {%- if cookiecutter.landscape|lower == 'yes' %} |landscape|{% endif -%}
+          {%- if cookiecutter.scrutinizer|lower == 'yes' %} |scrutinizer|{% endif -%}
+          {%- if cookiecutter.codacy|lower == 'yes' %} |codacy|{% endif -%}
+          {%- if cookiecutter.codeclimate|lower == 'yes' %} |codeclimate|{% endif -%}
+{{ '' }}
+    * - package
+      - |version| |downloads| |wheel| |supported-versions| |supported-implementations|
 
 .. |docs| image:: https://readthedocs.org/projects/{{ cookiecutter.repo_name }}/badge/?style=flat
     :target: https://readthedocs.org/projects/{{ cookiecutter.repo_name }}
     :alt: Documentation Status
-
-.. |travis| image:: http://img.shields.io/travis/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/master.png?style=flat
+{{ '' }}
+{%- if cookiecutter.travis|lower == 'yes' %}
+.. |travis| image:: https://travis-ci.org/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}.svg?branch=master
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}
-
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}?branch=master
+{% endif %}
+{%- if cookiecutter.appveyor|lower == 'yes' %}
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}?branch=master&svg=true
     :alt: AppVeyor Build Status
     :target: https://ci.appveyor.com/project/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}
-
-.. |coveralls| image:: http://img.shields.io/coveralls/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/master.png?style=flat
+{% endif %}
+{%- if cookiecutter.requiresio|lower == 'yes' %}
+.. |requires| image:: https://requires.io/github/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/requirements.svg?branch=master
+    :alt: Requirements Status
+    :target: https://requires.io/github/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/requirements/?branch=master
+{% endif %}
+{%- if cookiecutter.coveralls|lower == 'yes' %}
+.. |coveralls| image:: https://coveralls.io/repos/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/badge.svg?branch=master&service=github
     :alt: Coverage Status
     :target: https://coveralls.io/r/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}
-
+{% endif %}
+{%- if cookiecutter.codecov|lower == 'yes' %}
+.. |codecov| image:: https://codecov.io/github/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/coverage.svg?branch=master
+    :alt: Coverage Status
+    :target: https://codecov.io/github/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}
+{% endif %}
+{%- if cookiecutter.landscape|lower == 'yes' %}
 .. |landscape| image:: https://landscape.io/github/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/master/landscape.svg?style=flat
     :target: https://landscape.io/github/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/master
     :alt: Code Quality Status
-
-.. |version| image:: http://img.shields.io/pypi/v/{{ cookiecutter.distribution_name }}.png?style=flat
+{% endif %}
+{%- if cookiecutter.codacy|lower == 'yes' %}
+.. |codacy| image:: https://img.shields.io/codacy/REPLACE_WITH_PROJECT_ID.svg?style=flat
+    :target: https://www.codacy.com/app/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}
+    :alt: Codacy Code Quality Status
+{% endif %}
+{%- if cookiecutter.codeclimate|lower == 'yes' %}
+.. |codeclimate| image:: https://codeclimate.com/github/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/badges/gpa.svg
+   :target: https://codeclimate.com/github/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}
+   :alt: CodeClimate Quality Status
+{% endif %}
+.. |version| image:: https://img.shields.io/pypi/v/{{ cookiecutter.distribution_name }}.svg?style=flat
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/{{ cookiecutter.distribution_name }}
 
-.. |downloads| image:: http://img.shields.io/pypi/dm/{{ cookiecutter.distribution_name }}.png?style=flat
+.. |downloads| image:: https://img.shields.io/pypi/dm/{{ cookiecutter.distribution_name }}.svg?style=flat
     :alt: PyPI Package monthly downloads
     :target: https://pypi.python.org/pypi/{{ cookiecutter.distribution_name }}
 
-.. |wheel| image:: https://pypip.in/wheel/{{ cookiecutter.distribution_name }}/badge.png?style=flat
+.. |wheel| image:: https://img.shields.io/pypi/wheel/{{ cookiecutter.distribution_name }}.svg?style=flat
     :alt: PyPI Wheel
     :target: https://pypi.python.org/pypi/{{ cookiecutter.distribution_name }}
 
-.. |supported-versions| image:: https://pypip.in/py_versions/{{ cookiecutter.distribution_name }}/badge.png?style=flat
+.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/{{ cookiecutter.distribution_name }}.svg?style=flat
     :alt: Supported versions
     :target: https://pypi.python.org/pypi/{{ cookiecutter.distribution_name }}
 
-.. |supported-implementations| image:: https://pypip.in/implementation/{{ cookiecutter.distribution_name }}/badge.png?style=flat
-    :alt: Supported imlementations
+.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/{{ cookiecutter.distribution_name }}.svg?style=flat
+    :alt: Supported implementations
     :target: https://pypi.python.org/pypi/{{ cookiecutter.distribution_name }}
-
-.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/master.png?style=flat
+{% if cookiecutter.scrutinizer|lower == 'yes' %}
+.. |scrutinizer| image:: https://img.shields.io/scrutinizer/g/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/master.svg?style=flat
     :alt: Scrutinizer Status
     :target: https://scrutinizer-ci.com/g/{{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}/
+{% endif %}
 
-{{ cookiecutter.project_short_description }}
+.. end-badges
+
+{{ cookiecutter.project_short_description|wordwrap(119) }}
 
 * Free software: BSD license
 
